@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rss version='2.0' xmlns:atom='http://www.w3.org/2005/Atom'>
+<channel>
+<atom:link href='http://goslices.com/' rel='self' type='application/rss+xml'/>
+<generator>
+clj-rss
+</generator>
+<title>
+GoSlices
+</title>
+<link>
+http://goslices.com/
+</link>
+<description>
+Weekly slices of go knowledge in &lt;200 words
+</description>
+<lastBuildDate>
+Wed, 08 Apr 2015 09:55:07 +0100
+</lastBuildDate>
+<author>
+
+</author>
+<item>
+<guid>
+http://goslices.com/posts/2015-04-08-append.html
+</guid>
+<link>
+http://goslices.com/posts/2015-04-08-append.html
+</link>
+<title>
+Make and loop, don't append
+</title>
+<description>
+&lt;p&gt;For a much better discussion of this topic read the &lt;a href='http://blog.golang.org/slices'&gt;go blog&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Sometimes you might find yourself looping and appending to a list like this:&lt;pre&gt;&lt;code&gt;func appendMapper&amp;#40;ls &amp;#91;&amp;#93;int&amp;#41; &amp;#91;&amp;#93;int {
+	result := &amp;#91;&amp;#93;int{}
+	for &amp;#95;, x := range ls {
+		result = append&amp;#40;result, x&amp;#42;2&amp;#41;
+	}
+	return result
+}
+ &lt;/code&gt;&lt;/pre&gt; It's tempting to do this. But append is one of those troublesome words that already means something in English:&lt;pre&gt;&lt;code&gt;v. To add as a supplement or appendix
+v. To fix to; attach
+ &lt;/code&gt;&lt;/pre&gt; It sounds like what you want. but append has a very specific meaning in go. If the slice is as its capacity it increases the capacity above what is required before appending.&lt;pre&gt;&lt;code&gt;package main
+
+import &amp;quot;fmt&amp;quot;
+
+func main&amp;#40;&amp;#41; {
+	ls := &amp;#91;&amp;#93;int{1}
+	fmt.Println&amp;#40;len&amp;#40;ls&amp;#41;, cap&amp;#40;ls&amp;#41;&amp;#41;
+	ls = append&amp;#40;ls, 2&amp;#41;
+	fmt.Println&amp;#40;len&amp;#40;ls&amp;#41;, cap&amp;#40;ls&amp;#41;&amp;#41;
+	ls = append&amp;#40;ls, 3&amp;#41;
+	fmt.Println&amp;#40;len&amp;#40;ls&amp;#41;, cap&amp;#40;ls&amp;#41;&amp;#41;
+	ls = append&amp;#40;ls, 4, 5&amp;#41;
+	fmt.Println&amp;#40;len&amp;#40;ls&amp;#41;, cap&amp;#40;ls&amp;#41;&amp;#41;
+	ls = append&amp;#40;ls, 7, 8, 9, 10&amp;#41;
+	fmt.Println&amp;#40;len&amp;#40;ls&amp;#41;, cap&amp;#40;ls&amp;#41;&amp;#41;
+}
+ &lt;/code&gt;&lt;/pre&gt; &lt;a href='http://play.golang.org/p/kPcLAgGdPv'&gt;Open in playground&lt;/a&gt;&lt;/p&gt;&lt;p&gt;Output:&lt;pre&gt;&lt;code&gt;1 1
+2 2
+3 4
+5 8
+9 16
+ &lt;/code&gt;&lt;/pre&gt; So by the end, even though we only have 9 items in the slice. 16 ints worth of bytes  will have been allocated.&lt;/p&gt;&lt;p&gt;Sometimes this is unavoidable. But if you know the size of your output you should do this:&lt;pre&gt;&lt;code&gt;func loopMapper&amp;#40;ls &amp;#91;&amp;#93;int&amp;#41; &amp;#91;&amp;#93;int {
+	result := make&amp;#40;&amp;#91;&amp;#93;int, len&amp;#40;ls&amp;#41;&amp;#41;
+	for i, x := range ls {
+		result&amp;#91;i&amp;#93; = x &amp;#42; 2
+	}
+	return result
+}
+ &lt;/code&gt;&lt;/pre&gt; That way only the exact size needed is allocated.&lt;/p&gt;
+</description>
+<pubDate>
+Wed, 08 Apr 2015 00:00:00 +0100
+</pubDate>
+<author>
+
+</author>
+</item>
+<item>
+<guid>
+http://goslices.com/posts/2015-04-02-first.html
+</guid>
+<link>
+http://goslices.com/posts/2015-04-02-first.html
+</link>
+<title>
+This blog
+</title>
+<description>
+&lt;p&gt;This blog came off the back off doing the &lt;a href='http://devcareerboost.com/blog-course/'&gt;blog course&lt;/a&gt; run by &lt;a href='http://simpleprogrammer.com'&gt;simple programmer&lt;/a&gt;.&lt;/p&gt;
+</description>
+<pubDate>
+Thu, 02 Apr 2015 00:00:00 +0100
+</pubDate>
+<author>
+
+</author>
+</item>
+</channel>
+</rss>
